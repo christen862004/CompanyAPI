@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1 id="name">Local HTML Consumer</h1>
+    <input type="button" value="Get DeptInfo" onclick="GetDeptInfo()" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        //jquery  ==> call using ajax request web api endpoint ==>json
+        function GetDeptInfo() {
+            //ajax call using jquery default get request (json)
+            $.ajax({
+                url: "/api/Department/1",
+                success: function (result) {
+                    console.log(result);
+                    console.log(result.deptID)
+                }
+            });
+        }
+    </script>
+</body>
+</html>

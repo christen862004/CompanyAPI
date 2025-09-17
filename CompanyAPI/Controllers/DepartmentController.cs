@@ -1,7 +1,6 @@
-﻿using CompanyAPI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace CompanyAPI.Controllers
 {
@@ -18,31 +17,78 @@ namespace CompanyAPI.Controllers
         [HttpGet]
         public IActionResult showAll()//get | delete with no body
         {
-            List<Department> deptList= companyContext.Department.ToList();
+            List<Department> deptList= companyContext.Department
+                .ToList();
             return Ok(deptList);//httpresponse with status code 200 :reposnse body (List<department>)
         }
 
+       
+        
         [HttpGet]
         [Route("{id:int}")]//api/epartment/2
         //http://localhost:5084/api/Department/OS
         //api/department/1
         public IActionResult Details(int id)
         {
-            Department dept= companyContext.Department.FirstOrDefault(d => d.Id == id);
+            //collect
+            Department dept= companyContext.Department
+                .Include(d => d.Employees)
+                .AsNoTracking()
+                .FirstOrDefault(d => d.Id == id);
+
             if (dept != null)
-                return Ok(dept);
+            {
+                //declare dTO
+                DeptWithEmpNamesDTO deptDto = new DeptWithEmpNamesDTO();
+                //map
+                deptDto.DeptID = dept.Id;
+                deptDto.DeptName = dept.Name;
+                foreach (var empItem in dept.Employees)
+                {
+                    deptDto.EmpNames.Add(empItem.Name);
+                }
+                //Send DTO  in Response Body
+                return Ok(deptDto);
+            }
             return BadRequest("Not Found");
         }
 
+
         [HttpGet("{name:alpha}")]//api/department/frontend
-        public IActionResult GetDetailsByName(string name)
+        public ActionResult<GeneralReposnse> GetDetailsByName(string name)
         {
             Department dept = companyContext.Department.FirstOrDefault(d => d.Name == name);
+            GeneralReposnse response = new GeneralReposnse();
             if (dept != null)
-                return Ok(dept);
-            return BadRequest("Not Found");
+            {
+                response.IsPass = true;
+                response.Data = dept;
+            }
+            else
+            {
+                response.IsPass = false;
+                response.Data = "Department Not Foun";
+            }
+            return response;
+            
         }
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //----------------------------------
         //api/department  [post]
