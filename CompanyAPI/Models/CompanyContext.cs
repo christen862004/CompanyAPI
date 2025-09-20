@@ -1,20 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyAPI.Models
 {
-    public class CompanyContext:DbContext
+    public class CompanyContext:IdentityDbContext<ApplicationUser>
     {
         public DbSet<Department> Department { get; set; }
         public DbSet<Employee> Employee { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public CompanyContext(DbContextOptions<CompanyContext> options):base(options)
         {
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CompanyAPIG2;Integrated Security=True;Encrypt=False");
-            base.OnConfiguring(optionsBuilder);
+            
         }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CompanyAPIG2;Integrated Security=True;Encrypt=False");
+        //    base.OnConfiguring(optionsBuilder);
+        //}
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<Department>().HasData(new Department() { Id = 1, Name = ".net", ManagerName = "ahme" });
             modelBuilder.Entity<Department>().HasData(new Department() { Id = 2, Name = "Front end", ManagerName = "mohamed" });
             modelBuilder.Entity<Department>().HasData(new Department() { Id = 3, Name = "OS", ManagerName = "ali" });

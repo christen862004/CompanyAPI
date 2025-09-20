@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -9,12 +10,13 @@ namespace CompanyAPI.Controllers
     public class DepartmentController : ControllerBase
     {
         CompanyContext companyContext;
-        public DepartmentController()
+        public DepartmentController(CompanyContext ctx)
         {
-            companyContext = new CompanyContext();
+            companyContext = ctx;
         }
         //api/department  [get]
         [HttpGet]
+        [Authorize]
         public IActionResult showAll()//get | delete with no body
         {
             List<Department> deptList= companyContext.Department
